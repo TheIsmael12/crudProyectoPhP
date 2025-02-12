@@ -57,17 +57,28 @@ function obtenerAnteriorCliente($idActual)
 function getClientPhoto(int $id): string
 {
 
-    $filePath = __DIR__ . '/../uploads/' . sprintf('%08d', $id) . '.jpg';
-    $publicPath = 'app/uploads/' . sprintf('%08d', $id) . '.jpg';
+    $uploadDir = __DIR__ . '/../uploads/';
+    $publicDir = 'app/uploads/';
+    $fileName = sprintf('%08d', $id);
 
     // Verifica si el archivo existe
-    if (file_exists($filePath)) {
+    $allowedExtensions = ['jpg', 'png'];
 
-        return $publicPath;
+    foreach ($allowedExtensions as $ext) {
+
+        $filePath = $uploadDir . $fileName . '.' . $ext;
+
+        if (file_exists($filePath)) {
+
+            return $publicDir . $fileName . '.' . $ext;
+
+        }
+
     }
 
     // Si no existe el archivo, retorna una imagen por defecto
     return 'https://robohash.org/' . $id;
+    
 }
 
 // Obtener flag
@@ -88,4 +99,58 @@ function getCountryFlag(string $ip): string
     }
 
     return "https://flagpedia.net/data/flags/icon/40x30/un.png";
+}
+
+// Subir imagen:
+
+function subirImagen(array $file, int $id): ?string
+{
+
+    // Verifica si se ha recibido un archivo sin errores
+    if (isset($file['tmp_name']) && $file['error'] === UPLOAD_ERR_OK) {
+
+        $uploadDir = 'app/uploads/'; // Directorio donde se almacenarán las imágenes
+        $tmpName = $file['tmp_name']; // Nombre temporal del archivo
+        $fileName = sprintf("%08d", $id); // Nombre base del archivo sin extensión
+
+        // Extensiones permitidas
+        $allowedMimeTypes = [
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png'
+        ];
+
+        // Obtener el tipo MIME real del archivo
+        $fileMimeType = mime_content_type($tmpName);
+
+        // Verifica si el archivo es una imagen válida
+        if (!array_key_exists($fileMimeType, $allowedMimeTypes)) {
+            $_SESSION['error'] = "Tipo de archivo no permitido. Solo se permiten imágenes JPG y PNG.";
+            return null;
+        }
+
+        // Definir la extensión correcta basada en el MIME type
+        $fileExtension = $allowedMimeTypes[$fileMimeType];
+        $uploadFile = $uploadDir . $fileName . '.' . $fileExtension;
+
+        // Verifica el tamaño del archivo (menos de 500 KB)
+        if ($file['size'] > 50000 * 1024) {  // 500 KB en bytes
+            $_SESSION['error'] = "El archivo excede el tamaño máximo permitido (500 KB).";
+            return null;
+        }
+
+        // Eliminar cualquier archivo existente con el mismo nombre pero diferente extensión
+        foreach (glob($uploadDir . $fileName . ".*") as $existingFile) {
+            unlink($existingFile);
+        }
+
+        // Intenta mover el archivo desde su ubicación temporal al directorio final
+        if (move_uploaded_file($tmpName, $uploadFile)) {
+            return $uploadFile; // Retorna la ruta de la imagen si se subió correctamente
+        } else {
+            $_SESSION['error'] = "Error al cargar la imagen.";
+        }
+    }
+
+    return null; // Si no se cargó ningún archivo o hubo algún error
+
 }

@@ -49,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         switch ($_GET['orden']) {
 
             case "Nuevo":
-                $_SESSION['form_data'] = '';
                 crudAlta();
                 break;
             case "Borrar":

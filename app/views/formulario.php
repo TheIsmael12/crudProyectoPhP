@@ -6,6 +6,9 @@ unset($_SESSION['error']);
 // Recuperar datos del formulario de la sesión si existen
 $form_data = $_SESSION['form_data'] ?? [];
 
+// Variable para la ruta de la imagen
+$imagePath = ''; // Deberías obtener la ruta de la imagen del cliente, por ejemplo desde la base de datos
+
 ?>
 
 <div class="container my-5">
@@ -26,7 +29,12 @@ $form_data = $_SESSION['form_data'] ?? [];
         <div class="text-center mb-4">
             <label for="photo">Imagen:</label>
             <br>
-            <img class="rounded" width="100" height="120" src="" alt="<?= $cli->first_name; ?> Photo">
+            <!-- Mostrar la imagen actual -->
+            <?php if ($imagePath): ?>
+                <img class="rounded" width="100" height="120" src="<?= $imagePath ?>" alt="<?= $cli->first_name; ?> Photo">
+            <?php else: ?>
+                <img class="rounded" width="100" height="120" src="default_image.jpg" alt="Imagen por defecto">
+            <?php endif; ?>
             <input type="file" name="photo" />
         </div>
 

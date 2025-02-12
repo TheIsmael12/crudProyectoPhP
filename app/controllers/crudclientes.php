@@ -12,21 +12,16 @@ function crudBorrar($id)
         if ($resu) {
 
             $_SESSION['msg'] = "El usuario " . $id . " ha sido eliminado.";
-
         } else {
 
             $_SESSION['msg'] = "Error al eliminar el usuario " . $id . ".";
-
         }
-
     } else {
 
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para eliminar.";
         header("Location: ?orden=Lista");
-    
     }
-
 }
 
 function crudTerminar()
@@ -44,15 +39,12 @@ function crudAlta()
         $cli = new Cliente();
         $orden = "Nuevo";
         include_once "app/views/formulario.php";
-
     } else {
 
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para crear nuevos usuarios.";
         header("Location: ?orden=Lista");
-
     }
-
 }
 
 function crudModificar($id)
@@ -65,7 +57,6 @@ function crudModificar($id)
         $cli = $db->getCliente($id);
         $orden = "Modificar";
         include_once "app/views/formulario.php";
-
     } else {
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para modificar.";
@@ -94,14 +85,12 @@ function crudPostAlta()
     // Verificar si el usuario tiene el rol adecuado
     if ($_SESSION['rol'] == 1) {
 
-        // Guardar los datos del formulario en la sesión antes de redirigir
-        $_SESSION['form_data'] = $_POST;
-
         // Permitir el alta solo si el rol es 1
         limpiarArrayEntrada($_POST);
 
         // Inicializar el cliente
         $cli = new Cliente();
+
         $cli->first_name    = $_POST['first_name'];
         $cli->last_name     = $_POST['last_name'];
         $cli->email         = $_POST['email'];
@@ -114,13 +103,15 @@ function crudPostAlta()
 
         // Validar cliente
         $errors = $validator->validateClient([
+
             'email' => $cli->email,
             'ip' => $cli->ip_address,
             'phone' => $cli->telefono
+
         ]);
 
         if (!empty($errors)) {
-            
+
             $_SESSION['error'] = "Errores al dar de alta al usuario: " . implode(', ', $errors);
             header("Location: ?orden=Nuevo");
             return;
@@ -128,20 +119,31 @@ function crudPostAlta()
 
         $lastInsertId = $db->addCliente($cli);
 
+        // Comprobar si se subió una imagen
+        if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+
+            $photo = $_FILES['photo'];
+            $uploadResult = subirImagen($photo, $lastInsertId);
+
+            if ($uploadResult !== null) {
+
+                $cli->file = $uploadResult;
+            }
+        }
+
         // Insertar el cliente en la base de datos
         if ($lastInsertId) {
 
             $_SESSION['msg'] = "El usuario " . $cli->first_name . " se ha dado de alta.";
+
             // Redirigir a la página principal
             header("Location: ?orden=Detalles&id=" . $lastInsertId);
-
         } else {
 
             $_SESSION['error'] = "Error al dar de alta al usuario " . $cli->first_name . ".";
-
         }
-
     } else {
+
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para crear nuevos usuarios.";
         header("Location: ?orden=Lista");
@@ -154,7 +156,6 @@ function crudPostModificar()
 
     $cli = new Cliente();
     $cli->id            = $_POST['id'];
-    $cli->file          = $_POST['file'];
     $cli->first_name    = $_POST['first_name'];
     $cli->last_name     = $_POST['last_name'];
     $cli->email         = $_POST['email'];
@@ -180,6 +181,18 @@ function crudPostModificar()
         $_SESSION['error'] = "Errores al modificar al usuario: " . implode(', ', $errors);
         header("Location: ?orden=Modificar&id=" . $cli->id);
         return;
+    }
+
+    // Comprobar si se subió una imagen
+    if (isset($_FILES['photo']) && $_FILES['photo']['error'] === UPLOAD_ERR_OK) {
+
+        $photo = $_FILES['photo'];
+        $uploadResult = subirImagen($photo, $cli->id);
+
+        if ($uploadResult !== null) {
+
+            $cli->file = $uploadResult;
+        }
     }
 
     if ($db->modCliente($cli)) {
@@ -241,6 +254,8 @@ function crudGenerarPDF($id)
     $pdf->Image($imagePath, 10, 100, 40, 50);  // Cambia las dimensiones según sea necesario
 
     // Generar el PDF
-    $pdf->Output('detalle_cliente_' . $cli->id . '.pdf', 'I'); // 'I' para visualizar el PDF en el navegador
+    ob_end_clean(); // Limpia cualquier salida previa
+    $pdf->Output('detalle_cliente_' . $cli->id . '.pdf', 'I');
+    // 'I' para visualizar el PDF en el navegador
 
 }
