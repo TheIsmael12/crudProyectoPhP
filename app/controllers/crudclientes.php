@@ -39,12 +39,15 @@ function crudAlta()
         $cli = new Cliente();
         $orden = "Nuevo";
         include_once "app/views/formulario.php";
+
     } else {
 
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para crear nuevos usuarios.";
         header("Location: ?orden=Lista");
+
     }
+    
 }
 
 function crudModificar($id)
