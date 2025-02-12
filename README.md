@@ -1,59 +1,97 @@
-Proyecto de Gestión de Clientes
-Este proyecto se encarga de gestionar la información de clientes, permitiendo realizar operaciones de visualización, edición, eliminación, y seguridad en el acceso.
+# Proyecto de Gestión de Clientes
 
-Requisitos
-PHP (con soporte para bases de datos)
-MySQL
-JavaScript
-Librerías y APIs externas:
-RoboHash para imágenes predeterminadas
-IP-API para obtener información de la IP
-Flagpedia para mostrar banderas
-OpenLayers o similar para geolocalización
-Funcionalidades
-1. Mostrar y Modificar Opciones de Siguiente y Anterior
-Se implementará la navegación por la lista de clientes con opciones de "Siguiente" y "Anterior". La lista se podrá ordenar por diferentes criterios como nombre, apellido, correo electrónico, género o IP.
+Este proyecto tiene como objetivo gestionar la información de clientes, permitiendo realizar operaciones de **visualización**, **edición**, **eliminación** y garantizando la **seguridad** en el acceso a la aplicación.
 
-La navegación permitirá desplazarse por los resultados según el orden seleccionado, limitando el número de registros mostrados por página.
+## Requisitos
 
-2. Mejoras en Operaciones de Nuevo y Modificar
-Se mejorarán las operaciones de "Nuevo" y "Modificar" para validar los datos ingresados:
+- **PHP** (con soporte para bases de datos)
+- **MySQL**
+- **JavaScript**
 
-Correo Electrónico: Verificar que el correo electrónico no esté repetido.
-IP: Verificar que la IP sea válida.
-Teléfono: Validar que el formato del teléfono siga el patrón 999-999-9999.
-3. Mostrar Imagen Asociada al Cliente
-Se mostrará una imagen asociada al cliente que esté almacenada previamente en la carpeta uploads o, en su defecto, se generará una imagen predeterminada aleatoria utilizando RoboHash. El nombre de las fotos debe seguir el formato 00000XXX.jpg, donde XXX es el ID del cliente.
+### Librerías y APIs Externas
 
-4. Subir o Cambiar Foto del Cliente
-Durante las operaciones de "Nuevo" y "Modificar", se permitirá subir o cambiar la foto del cliente. Se controlará lo siguiente:
+- **RoboHash**: Para generar imágenes predeterminadas.
+- **IP-API**: Para obtener información geográfica a partir de la IP.
+- **Flagpedia**: Para mostrar las banderas de los países.
+- **OpenLayers** o similar: Para geolocalización del cliente.
 
-El archivo debe ser una imagen en formato JPG o PNG.
-El tamaño del archivo debe ser inferior a 500 KB.
-La imagen no es obligatoria.
-5. Mostrar Bandera del País Asociado a la IP
-En los detalles del cliente, se mostrará la bandera del país asociada a la IP utilizando la API de IP-API y Flagpedia.
+## Funcionalidades
 
-6. Lista de Clientes con Distintos Modos de Ordenación
-Se mostrará una lista de clientes que se podrá ordenar según diversos criterios (nombre, apellido, correo electrónico, género o IP). Además, se podrá navegar por la lista utilizando las opciones de "Siguiente" y "Anterior" según el criterio de ordenación seleccionado.
+### 1. **Navegación y Ordenación de Clientes**
 
-7. Generar PDF con los Detalles de un Cliente
-Se añadirá una funcionalidad para generar un archivo PDF con todos los detalles de un cliente. También se incluirá un botón para imprimir el PDF generado.
+- Se implementará un sistema de navegación para visualizar los clientes con opciones de **"Siguiente"** y **"Anterior"**.
+- La lista se podrá ordenar por los siguientes criterios:
+  - **Nombre**
+  - **Apellido**
+  - **Correo electrónico**
+  - **Género**
+  - **IP**
+- Los resultados se mostrarán **paginados**, limitando el número de registros por página.
 
-8. Gestión de Usuarios de la Aplicación
-Se creará una nueva tabla en la base de datos de usuarios (User) con los siguientes campos:
+### 2. **Validación al Crear o Modificar Clientes**
 
-login: Nombre de usuario.
-password: Contraseña (encriptada).
-rol: Rol del usuario (0: solo acceso a visualización, 1: acceso completo a modificación y eliminación).
-Se definirán varios usuarios con distintos roles, y el acceso a la aplicación se controlará de la siguiente forma:
+- Durante las operaciones de **"Nuevo"** y **"Modificar"** se validarán los datos ingresados:
+  - **Correo electrónico**: Verificar que no esté repetido.
+  - **IP**: Validar que la IP sea correcta.
+  - **Teléfono**: Asegurarse de que el formato sea `999-999-9999`.
 
-El usuario debe introducir su login y contraseña correctamente.
-Si se realizan más de tres intentos fallidos, se solicitará que se reinicie el navegador.
-9. Control de Acceso por Rol
-El acceso a las funcionalidades de la aplicación dependerá del rol del usuario:
+### 3. **Imagen Asociada al Cliente**
 
-Rol 0: Sólo podrá visualizar los datos (lista y detalles).
-Rol 1: Además de visualizar, podrá modificar, eliminar y gestionar usuarios.
-10. Geolocalización de Cliente en un Mapa
-Utilizando la API de GeoIP y una librería como OpenLayers, se mostrará la localización geográfica del cliente en un mapa, basándose en la IP del mismo.
+- Se mostrará una imagen asociada a cada cliente almacenada en la carpeta `uploads`, o, si no existe, se generará una imagen aleatoria utilizando **RoboHash**.
+- Las imágenes deben seguir el formato: `00000XXX.jpg`, donde `XXX` es el ID del cliente.
+
+### 4. **Subir o Cambiar Foto del Cliente**
+
+- En las operaciones de **"Nuevo"** y **"Modificar"**, se permitirá subir o cambiar la foto del cliente.
+  - El archivo debe ser una imagen en formato **JPG** o **PNG**.
+  - El tamaño máximo del archivo será **500 KB**.
+  - La foto no es obligatoria.
+
+### 5. **Bandera del País según la IP**
+
+- En los detalles del cliente, se mostrará la **bandera del país** asociada a la IP utilizando la API **IP-API** y **Flagpedia**.
+
+### 6. **Lista de Clientes con Múltiples Opciones de Ordenación**
+
+- Los usuarios podrán ver una lista de clientes que se podrá ordenar según los siguientes criterios:
+  - **Nombre**
+  - **Apellido**
+  - **Correo electrónico**
+  - **Género**
+  - **IP**
+- También se podrán navegar por los registros utilizando las opciones de **"Siguiente"** y **"Anterior"**.
+
+### 7. **Generación de PDF de los Detalles del Cliente**
+
+- Se añadirá una funcionalidad para **generar un archivo PDF** con todos los detalles de un cliente.
+- Habrá un botón para **imprimir** el PDF generado.
+
+### 8. **Gestión de Usuarios de la Aplicación**
+
+- Se creará una nueva tabla en la base de datos para gestionar usuarios (`User`), con los siguientes campos:
+  - `login`: Nombre de usuario.
+  - `password`: Contraseña encriptada.
+  - `rol`: Rol del usuario (0: acceso solo a visualización, 1: acceso completo a modificación y eliminación).
+
+- El acceso a la aplicación se controlará de la siguiente manera:
+  - El usuario debe introducir correctamente su **login** y **contraseña**.
+  - Si se realizan más de tres intentos fallidos, se solicitará que **reinicie el navegador**.
+
+### 9. **Control de Acceso por Rol**
+
+- El acceso a las funcionalidades de la aplicación dependerá del rol del usuario:
+  - **Rol 0**: Sólo podrá **visualizar** los datos (lista y detalles).
+  - **Rol 1**: Además de visualizar, podrá **modificar**, **eliminar** y **gestionar usuarios**.
+
+### 10. **Geolocalización de Clientes en un Mapa**
+
+- Utilizando la API **GeoIP** y una librería como **OpenLayers**, se mostrará la **localización geográfica** del cliente en un mapa, basándose en la IP del mismo.
+
+---
+
+## Instalación
+
+1. Clona este repositorio en tu máquina local:
+
+   ```bash
+   git clone https://github.com/tuusuario/gestion-clientes.git
