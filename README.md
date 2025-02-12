@@ -94,4 +94,4 @@ Este proyecto tiene como objetivo gestionar la información de clientes, permiti
 1. Clona este repositorio en tu máquina local:
 
    ```bash
-   git clone https://github.com/tuusuario/gestion-clientes.git
+   git clone https://github.com/TheIsmael12/crudProyectoPhP.git
