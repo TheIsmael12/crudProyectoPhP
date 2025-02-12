@@ -13,7 +13,7 @@ Este proyecto tiene como objetivo gestionar la información de clientes, permiti
 - **RoboHash**: Para generar imágenes predeterminadas.
 - **IP-API**: Para obtener información geográfica a partir de la IP.
 - **Flagpedia**: Para mostrar las banderas de los países.
-- **OpenLayers** o similar: Para geolocalización del cliente.
+- **GoogleMapsApi**: Para geolocalización del cliente.
 
 ## Funcionalidades
 
