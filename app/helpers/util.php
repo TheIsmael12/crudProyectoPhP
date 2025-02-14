@@ -142,7 +142,7 @@ function subirImagen(array $file, int $id): ?string
         $uploadFile = $uploadDir . $fileName . '.' . $fileExtension;
 
         // Verifica el tamaño del archivo (menos de 500 KB)
-        if ($file['size'] > 50000 * 1024) {  // 500 KB en bytes
+        if ($file['size'] > 500 * 1024) {  // 500 KB en bytes
             $_SESSION['error'] = "El archivo excede el tamaño máximo permitido (500 KB).";
             return null;
         }
