@@ -30,55 +30,55 @@
                 <tr>
                     <th>
                         ID
-                        <a href="?orden=id" class="btn btn-link">
+                        <a href="?ordenar=id" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'id'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'id'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
                     <th>
                         First Name
-                        <a href="?orden=first_name" class="btn btn-link">
+                        <a href="?ordenar=first_name" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'first_name'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'first_name'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
                     <th>
                         Email
-                        <a href="?orden=email" class="btn btn-link">
+                        <a href="?ordenar=email" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'email'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'email'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
                     <th>
                         Gender
-                        <a href="?orden=gender" class="btn btn-link">
+                        <a href="?ordenar=gender" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'gender'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'gender'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
                     <th>
                         IP Address
-                        <a href="?orden=ip_address" class="btn btn-link">
+                        <a href="?ordenar=ip_address" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'ip_address'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'ip_address'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
                     <th>
                         Teléfono
-                        <a href="?orden=telefono" class="btn btn-link">
+                        <a href="?ordenar=telefono" class="btn btn-link">
                             <i class="fa fa-filter"></i>
-                            <?php if (isset($_GET['orden']) && $_GET['orden'] == 'telefono'): ?>
-                                <i class="fa <?php echo (isset($_GET['dir']) && $_GET['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
+                            <?php if (isset($_SESSION['orden']) && $_SESSION['orden'] == 'telefono'): ?>
+                                <i class="fa <?php echo (isset($_SESSION['dir']) && $_SESSION['dir'] == 'desc') ? 'fa-arrow-down' : 'fa-arrow-up'; ?>"></i>
                             <?php endif; ?>
                         </a>
                     </th>
@@ -145,8 +145,6 @@
                 Último
             </button>
 
-            <!-- Agregar el parámetro "orden" en cada botón -->
-            <input type="hidden" name="orden" value="<?= htmlspecialchars($orden) ?>" />
         </form>
     </div>
 

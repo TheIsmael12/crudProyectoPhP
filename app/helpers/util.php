@@ -24,8 +24,11 @@ function obtenerSiguienteCliente($idActual)
 {
     $db = AccesoDatos::getModelo();
 
+    $orden = $_SESSION['orden'];
+    $dir = $_SESSION['dir'];
+
     // Obtenemos el siguiente cliente basado en el ID mayor al actual
-    $clienteSiguiente = $db->getClienteSiguiente($idActual);
+    $clienteSiguiente = $db->getClienteSiguiente($idActual, $orden, $dir);
 
     // Verificamos si el siguiente cliente existe
     if ($clienteSiguiente) {
@@ -41,8 +44,11 @@ function obtenerAnteriorCliente($idActual)
 {
     $db = AccesoDatos::getModelo();
 
+    $orden = $_SESSION['orden'];
+    $dir = $_SESSION['dir'];
+
     // Obtenemos el cliente anterior basado en el ID menor al actual
-    $clienteAnterior = $db->getClienteAnterior($idActual);
+    $clienteAnterior = $db->getClienteAnterior($idActual, $orden, $dir);
 
     // Verificamos si el cliente anterior existe
     if ($clienteAnterior) {
@@ -57,28 +63,31 @@ function obtenerAnteriorCliente($idActual)
 function getClientPhoto(int $id): string
 {
 
-    $uploadDir = __DIR__ . '/../uploads/';
-    $publicDir = 'app/uploads/';
-    $fileName = sprintf('%08d', $id);
+    if (isset($id)) {
 
-    // Verifica si el archivo existe
-    $allowedExtensions = ['jpg', 'png'];
 
-    foreach ($allowedExtensions as $ext) {
+        $uploadDir = __DIR__ . '/../uploads/';
+        $publicDir = 'app/uploads/';
+        $fileName = sprintf('%08d', $id);
 
-        $filePath = $uploadDir . $fileName . '.' . $ext;
+        // Verifica si el archivo existe
+        $allowedExtensions = ['jpg', 'png'];
 
-        if (file_exists($filePath)) {
+        foreach ($allowedExtensions as $ext) {
 
-            return $publicDir . $fileName . '.' . $ext;
+            $filePath = $uploadDir . $fileName . '.' . $ext;
 
+            if (file_exists($filePath)) {
+
+                return $publicDir . $fileName . '.' . $ext;
+            }
         }
 
+        // Si no existe el archivo, retorna una imagen por defecto
+        return 'https://robohash.org/' . $id;
     }
 
-    // Si no existe el archivo, retorna una imagen por defecto
-    return 'https://robohash.org/' . $id;
-    
+    return false;
 }
 
 // Obtener flag

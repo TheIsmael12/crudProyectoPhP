@@ -73,7 +73,7 @@ class AccesoDatos
 
     // SELECT Devuelvo la lista de Usuarios
 
-    public function getClientes($offset, $limit, $orden): array
+    public function getClientes($offset, $limit, $orden, $dir): array
     {
         $tuser = [];
 
@@ -87,7 +87,7 @@ class AccesoDatos
         }
 
         // Prepara la consulta SQL con LIMIT y ORDER BY
-        $stmt_usuarios = $this->dbh->prepare("SELECT * FROM clientes ORDER BY $orden LIMIT :offset, :limit");
+        $stmt_usuarios = $this->dbh->prepare("SELECT * FROM clientes ORDER BY $orden $dir LIMIT :offset, :limit");
 
         // Asocia los parámetros para evitar inyecciones SQL
         $stmt_usuarios->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
@@ -183,13 +183,12 @@ class AccesoDatos
 
             // Si no se inserta correctamente, devolver null
             return null;
-
         } catch (Exception $e) {
 
             // Agregar un log de error más detallado si es necesario
             error_log("Error al agregar cliente: " . $e->getMessage());
             return null; // En caso de error, retornar null
-            
+
         }
     }
 
@@ -214,18 +213,12 @@ class AccesoDatos
             $stmt->bindParam(':gender', $cli->gender);
             $stmt->bindParam(':ip_address', $cli->ip_address);
             $stmt->bindParam(':telefono', $cli->telefono);
+
             $stmt->bindParam(':id', $cli->id);
 
             $stmt->execute();
 
-            if ($stmt->rowCount() === 1) {
-
-                // Manejar la carga del archivo
-                $this->handleFileUpload($cli->file, $cli->id);
-                return true;
-            }
-
-            return false;
+            return true;
         } catch (Exception $e) {
 
             error_log($e->getMessage());
@@ -300,38 +293,62 @@ class AccesoDatos
 
     // Obtener el siguiente cliente en función del ID
 
-    public function getClienteSiguiente($idActual)
-
+    public function getClienteSiguiente($idActual, $orden, $dir)
     {
-        // Consulta para obtener el siguiente cliente con un ID mayor al actual
-        $query = "SELECT * FROM clientes WHERE id > ? ORDER BY id ASC LIMIT 1";
+        // Definir columnas válidas
+        $columnas_validas = ['id', 'first_name', 'email', 'gender', 'ip_address', 'telefono'];
+
+        // Validar columna de ordenamiento
+        $orden = in_array($orden, $columnas_validas) ? $orden : 'id';
+
+        // Validar dirección de ordenamiento
+        $dir = strtoupper($dir) === 'ASC' ? 'ASC' : 'DESC';
+
+        // Obtener el valor del campo de orden del cliente actual
+        $query = "SELECT $orden FROM clientes WHERE id = ?";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute([$idActual]);
+        $actual = $stmt->fetchColumn();
 
-        // Verificamos si encontramos un siguiente cliente
-        $cliente = $stmt->fetch(PDO::FETCH_OBJ);
+        if (!$actual) return null; // Si no se encuentra el cliente actual
 
-        return $cliente ?: null; // Devuelve el cliente o null si no existe
+        // Obtener el siguiente cliente según el orden y dirección
+        $operador = ($dir === 'ASC') ? '>' : '<';
+        $query = "SELECT * FROM clientes WHERE $orden $operador ? ORDER BY $orden $dir LIMIT 1";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute([$actual]);
 
+        return $stmt->fetch(PDO::FETCH_OBJ) ?: null;
     }
 
-    // Obtener el cliente anterior en función del ID
-
-    public function getClienteAnterior($idActual)
+    public function getClienteAnterior($idActual, $orden, $dir)
     {
+        // Definir columnas válidas
+        $columnas_validas = ['id', 'first_name', 'email', 'gender', 'ip_address', 'telefono'];
 
-        // Consulta para obtener el cliente anterior con un ID menor al actual
-        $query = "SELECT * FROM clientes WHERE id < ? ORDER BY id DESC LIMIT 1";
+        // Validar columna de ordenamiento
+        $orden = in_array($orden, $columnas_validas) ? $orden : 'id';
+
+        // Validar dirección de ordenamiento
+        $dir = strtoupper($dir) === 'ASC' ? 'ASC' : 'DESC';
+
+        // Obtener el valor del campo de orden del cliente actual
+        $query = "SELECT $orden FROM clientes WHERE id = ?";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute([$idActual]);
+        $actual = $stmt->fetchColumn();
 
-        // Verificamos si encontramos un cliente anterior
-        $cliente = $stmt->fetch(PDO::FETCH_OBJ);
+        if (!$actual) return null; // Si no se encuentra el cliente actual
 
-        return $cliente ?: null; // Devuelve el cliente o null si no existe
+        // Obtener el cliente anterior según el orden y dirección
+        $operador = ($dir === 'ASC') ? '<' : '>';
+        $query = "SELECT * FROM clientes WHERE $orden $operador ? ORDER BY $orden $dir LIMIT 1";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute([$actual]);
 
+        return $stmt->fetch(PDO::FETCH_OBJ) ?: null;
     }
-
+    
     // Validar email
 
     public function validarEmail($email, $id)

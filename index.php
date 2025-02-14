@@ -36,6 +36,22 @@ if (!isset($_SESSION['pagina'])) {
 
 }
 
+if (!isset($_SESSION['orden'])) {
+
+    $_SESSION['orden'] = 'id';
+
+}
+
+if (!isset($_SESSION['dir'])) {
+
+    $_SESSION['dir'] = 'asc';
+
+}
+
+
+$orden = isset($_SESSION['orden']) ? $_SESSION['orden'] : 'id';
+$dir = isset($_SESSION['dir']) ? $_SESSION['dir'] : 'asc';
+
 $pagina = isset($_SESSION['pagina']) ? $_SESSION['pagina'] : 1;
 
 $_SESSION['msg'] = "";
@@ -43,6 +59,7 @@ $_SESSION['msg'] = "";
 ob_start();
 
 if ($_SERVER['REQUEST_METHOD'] == "GET") {
+
 
     if (isset($_GET['orden'])) {
 
@@ -70,6 +87,7 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
                 break;
         }
     }
+
 } else {
 
     if (isset($_POST['orden'])) {
@@ -93,6 +111,15 @@ if (isset($_GET['pag'])) {
 
 }
 
+if (isset($_GET['ordenar'])) {
+
+    $_SESSION['orden'] = $_GET['ordenar'] ;
+    $_SESSION['dir'] = ($_SESSION['dir'] ?? 'asc') === 'asc' ? 'desc' : 'asc';
+
+}
+
+$orden = $_SESSION['orden'];
+$dir = $_SESSION['dir'];
 $pagina = $_SESSION['pagina'];
 $offset = FPAG * ($pagina - 1);
 $limit = FPAG;
@@ -101,19 +128,7 @@ if (ob_get_length() == 0) {
 
     $db = AccesoDatos::getModelo();
 
-    // Obtener el campo por el cual ordenar (por defecto 'id')
-    $orden = isset($_GET['orden']) ? $_GET['orden'] : 'id';
-    
-    // Asegurarse de que la columna de ordenación es válida
-    $columnas_validas = ['id', 'first_name', 'email', 'gender', 'ip_address', 'telefono'];
-    
-    if (!in_array($orden, $columnas_validas)) {
-
-        $orden = 'id'; // Si el campo de orden es inválido, usar 'id' por defecto
-
-    }
-
-    $tclientes = $db->getClientes($offset, $limit, $orden);
+    $tclientes = $db->getClientes($offset, $limit, $orden, $dir);
     require_once "app/views/list.php";
 
 }

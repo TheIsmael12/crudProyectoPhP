@@ -3,12 +3,6 @@
 $error = $_SESSION['error'] ?? '';
 unset($_SESSION['error']);
 
-// Recuperar datos del formulario de la sesión si existen
-$form_data = $_SESSION['form_data'] ?? [];
-
-// Variable para la ruta de la imagen
-$imagePath = ''; // Deberías obtener la ruta de la imagen del cliente, por ejemplo desde la base de datos
-
 ?>
 
 <div class="container my-5">
@@ -25,20 +19,19 @@ $imagePath = ''; // Deberías obtener la ruta de la imagen del cliente, por ejem
     <?php endif; ?>
 
     <form method="POST" enctype="multipart/form-data" class="d-grid gap-3">
+
         <!-- Imagen del cliente -->
+
         <div class="text-center mb-4">
             <label for="photo">Imagen:</label>
             <br>
             <!-- Mostrar la imagen actual -->
-            <?php if ($imagePath): ?>
-                <img class="rounded" width="100" height="120" src="<?= $imagePath ?>" alt="<?= $cli->first_name; ?> Photo">
-            <?php else: ?>
-                <img class="rounded" width="100" height="120" src="default_image.jpg" alt="Imagen por defecto">
-            <?php endif; ?>
+            <img class="rounded" width="100" height="120" src="<?= isset($cli->id) ? getClientPhoto($cli->id) : '' ?>" alt="<?= htmlspecialchars($cli->first_name, ENT_QUOTES, 'UTF-8') ?> Photo">
             <input type="file" name="photo" />
         </div>
 
         <!-- Campos del formulario -->
+
         <div class="form-group">
             <label for="id">ID:</label>
             <input type="text" name="id" readonly value="<?= $cli->id ?>" class="form-control" />
@@ -46,32 +39,32 @@ $imagePath = ''; // Deberías obtener la ruta de la imagen del cliente, por ejem
 
         <div class="form-group">
             <label for="first_name">Nombre:</label>
-            <input type="text" id="first_name" name="first_name" value="<?= isset($form_data['first_name']) ? $form_data['first_name'] : $cli->first_name; ?>" class="form-control" />
+            <input type="text" id="first_name" name="first_name" value="<?= $cli->first_name; ?>" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="last_name">Apellido:</label>
-            <input type="text" id="last_name" name="last_name" value="<?= isset($form_data['last_name']) ? $form_data['last_name'] : $cli->last_name; ?>" class="form-control" />
+            <input type="text" id="last_name" name="last_name" value="<?=  $cli->last_name; ?>" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="email">Email:</label>
-            <input type="email" id="email" name="email" value="<?= isset($form_data['email']) ? $form_data['email'] : $cli->email; ?>" class="form-control" />
+            <input type="email" id="email" name="email" value="<?= $cli->email; ?>" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="gender">Género:</label>
-            <input type="text" id="gender" name="gender" value="<?= isset($form_data['gender']) ? $form_data['gender'] : $cli->gender; ?>" class="form-control" />
+            <input type="text" id="gender" name="gender" value="<?= $cli->gender; ?>" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="ip_address">Dirección IP:</label>
-            <input type="text" id="ip_address" name="ip_address" value="<?= isset($form_data['ip_address']) ? $form_data['ip_address'] : $cli->ip_address; ?>" class="form-control" />
+            <input type="text" id="ip_address" name="ip_address" value="<?= $cli->ip_address; ?>" class="form-control" />
         </div>
 
         <div class="form-group">
             <label for="telefono">Teléfono:</label>
-            <input type="text" id="telefono" name="telefono" value="<?= isset($form_data['telefono']) ? $form_data['telefono'] : $cli->telefono; ?>" class="form-control" />
+            <input type="text" id="telefono" name="telefono" value="<?= $cli->telefono; ?>" class="form-control" />
         </div>
 
         <!-- Botones de envío -->
@@ -87,9 +80,11 @@ $imagePath = ''; // Deberías obtener la ruta de la imagen del cliente, por ejem
 
         <div class="d-flex justify-content-center mt-4">
             <?php
-            // Obtener el cliente anterior y siguiente
-            $clienteAnterior = obtenerAnteriorCliente($cli->id);
-            $clienteSiguiente = obtenerSiguienteCliente($cli->id);
+
+                // Obtener el cliente anterior y siguiente
+                $clienteAnterior = obtenerAnteriorCliente($cli->id);
+                $clienteSiguiente = obtenerSiguienteCliente($cli->id);
+
             ?>
 
             <?php if ($clienteAnterior): ?>

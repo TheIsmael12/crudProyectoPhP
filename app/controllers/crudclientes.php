@@ -50,6 +50,25 @@ function crudAlta()
     
 }
 
+function crudAltaError($cli)
+{
+    // Verificar si el usuario tiene el rol adecuado
+    if ($_SESSION['rol'] == 1) {
+
+        // Si el rol es 1, permitir alta
+        $orden = "Nuevo";
+        include_once "app/views/formulario.php";
+
+    } else {
+
+        // Redirigir a una página de acceso denegado
+        $_SESSION['error'] = "No tienes permiso para crear nuevos usuarios.";
+        header("Location: ?orden=Lista");
+
+    }
+    
+}
+
 function crudModificar($id)
 {
     // Verificar si el usuario tiene el rol adecuado
@@ -60,11 +79,34 @@ function crudModificar($id)
         $cli = $db->getCliente($id);
         $orden = "Modificar";
         include_once "app/views/formulario.php";
+
     } else {
+
         // Redirigir a una página de acceso denegado
         $_SESSION['error'] = "No tienes permiso para modificar.";
         header("Location: ?orden=Lista");
+
     }
+
+}
+
+function crudModificarError($cli)
+{
+    // Verificar si el usuario tiene el rol adecuado
+    if ($_SESSION['rol'] == 1) {
+
+        // Si el rol es 1, permitir modificación
+        $orden = "Modificar";
+        include_once "app/views/formulario.php";
+
+    } else {
+
+        // Redirigir a una página de acceso denegado
+        $_SESSION['error'] = "No tienes permiso para modificar.";
+        header("Location: ?orden=Lista");
+
+    }
+    
 }
 
 function crudDetalles($id)
@@ -76,6 +118,7 @@ function crudDetalles($id)
         $db = AccesoDatos::getModelo();
         $cli = $db->getCliente($id);
         include_once "app/views/detalles.php";
+        
     } else {
         // Redirigir a una página de acceso denegado o a la lista de clientes
         $_SESSION['error'] = "No tienes permiso para ver detalles.";
@@ -116,8 +159,9 @@ function crudPostAlta()
         if (!empty($errors)) {
 
             $_SESSION['error'] = "Errores al dar de alta al usuario: " . implode(', ', $errors);
-            header("Location: ?orden=Nuevo");
+            crudAltaError($cli);
             return;
+
         }
 
         $lastInsertId = $db->addCliente($cli);
@@ -182,7 +226,7 @@ function crudPostModificar()
     if (!empty($errors)) {
 
         $_SESSION['error'] = "Errores al modificar al usuario: " . implode(', ', $errors);
-        header("Location: ?orden=Modificar&id=" . $cli->id);
+        crudModificarError($cli);
         return;
     }
 
@@ -204,6 +248,7 @@ function crudPostModificar()
         $_SESSION['msg'] = "El usuario " . $cli->first_name . " ha sido modificado.";
         header("Location: ?orden=Detalles&id=" . $cli->id);
         exit;
+        
     } else {
 
         // Si hubo un error al insertar
